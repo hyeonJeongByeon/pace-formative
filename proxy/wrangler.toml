@@ -1,0 +1,12 @@
+name = "pace-proxy"
+main = "worker.js"
+compatibility_date = "2026-07-01"
+
+# Non-secret config. Tighten ALLOWED_ORIGIN to the deployed site origin
+# (e.g. "https://<username>.github.io") before running real participants.
+[vars]
+ALLOWED_ORIGIN = "*"
+
+# Secrets are NOT set here (this file is committed). Set them with:
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler secret put STUDY_PASSCODE

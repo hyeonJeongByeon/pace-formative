@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE Practice Session</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ═══ 0. PASSCODE GATE (proxy requires it; researcher enters at session start) ═══ -->
+<div id="view-gate" class="view active">
+  <div class="wrap" style="max-width:420px;padding-top:5rem">
+    <h1>PACE Practice Session</h1>
+    <p class="sub">Enter the study passcode to begin. (Your researcher has it.)</p>
+    <input type="password" id="passcode-input" placeholder="Study passcode"
+      onkeypress="if(event.key==='Enter')App.enterPasscode()">
+    <button class="primary" onclick="App.enterPasscode()">Continue</button>
+    <p class="mute" id="gate-err" style="margin-top:.6rem"></p>
+  </div>
+</div>
+
+<!-- ═══ 1. PACE EDUCATION ═══ -->
+<!-- TODO(spec§8): wording below is a DRAFT PLACEHOLDER. Final wording will be
+     adapted from the PACE text materials used in the interview protocol. -->
+<div id="view-education" class="view">
+  <div class="wrap">
+    <h1>Getting more out of a medical visit</h1>
+    <p class="sub">PACE is a set of four things patients can do during a visit. Take a couple of minutes to read them — then you'll practice in a short role-play.</p>
+
+    <div class="card pace-item">
+      <div class="pace-letter P">P</div>
+      <div><b>Present detailed information</b> — describe your symptom fully: when it started, how often, how bad, and how it affects your day.
+        <div class="example">"It started six weeks ago, and it's bad enough that I've been skipping evening plans."</div></div>
+    </div>
+    <div class="card pace-item">
+      <div class="pace-letter A">A</div>
+      <div><b>Ask questions</b> — when you don't understand a word, a diagnosis, or a plan, ask directly.
+        <div class="example">"Can you explain what that term means in plain language?"</div></div>
+    </div>
+    <div class="card pace-item">
+      <div class="pace-letter C">C</div>
+      <div><b>Check understanding</b> — repeat the plan back in your own words to make sure you got it right.
+        <div class="example">"So just to make sure I have this: I take one pill each morning, and come back in a month?"</div></div>
+    </div>
+    <div class="card pace-item">
+      <div class="pace-letter E">E</div>
+      <div><b>Express concerns</b> — say what worries you, and speak up if something doesn't sit right or won't work for you.
+        <div class="example">"I'm worried this doesn't explain the tiredness — it feels different to me."</div></div>
+    </div>
+
+    <div class="phi-note" style="margin-top:1rem">
+      In the role-play you'll use a <b>made-up scenario we give you</b> — please don't enter your real personal health information anywhere in this tool.
+    </div>
+
+    <button class="primary" onclick="App.show('view-menu')">Continue to scenarios →</button>
+  </div>
+</div>
+
+<!-- ═══ 2. SCENARIO MENU ═══ -->
+<div id="view-menu" class="view">
+  <div class="wrap">
+    <h1>Choose a visit to practice</h1>
+    <p class="sub">Browse the five situations below and think about which one you'd pick. <b>Your researcher will then tell you which one to open.</b></p>
+    <div id="scenario-list"></div>
+    <p class="mute no-print" style="margin-top:.8rem">← <a href="#" onclick="App.show('view-education');return false">Back to the PACE overview</a></p>
+  </div>
+</div>
+
+<!-- ═══ 3. VIGNETTE BRIEFING ═══ -->
+<div id="view-briefing" class="view">
+  <div class="wrap">
+    <h1 id="brief-title"></h1>
+    <p class="sub">Your situation for this role-play:</p>
+    <div class="card" id="brief-text" style="font-size:.95rem;line-height:1.65"></div>
+    <p class="mute">You'll chat with the provider by typing. A coach may occasionally add a short tip — it appears as a highlighted note, and the provider can't "hear" it.</p>
+    <button class="primary" onclick="App.startRolePlay()">Start the visit</button>
+    <p class="mute no-print" style="margin-top:.8rem">← <a href="#" onclick="App.show('view-menu');return false">Back to scenarios</a></p>
+  </div>
+</div>
+
+<!-- ═══ 4. ROLE-PLAY CHAT ═══ -->
+<div id="view-chat" class="view">
+  <div class="chat-head">
+    <div class="avatar" id="chat-avatar"></div>
+    <div class="who">
+      <b id="chat-provider-name"></b>
+      <div id="chat-scenario-title"></div>
+    </div>
+    <div id="turn-counter"></div>
+    <button class="ghost no-print" onclick="App.researcherEnd()" title="Researcher escape hatch: provider closes the visit now">End visit</button>
+  </div>
+  <div id="chat-log"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chat-input" placeholder="Say something to the provider…"
+      onkeypress="if(event.key==='Enter'&&!this.disabled)App.send()">
+    <button id="send-btn" onclick="App.send()">➤</button>
+  </div>
+</div>
+
+<!-- ═══ 5. REPORT CARD ═══ -->
+<div id="view-report" class="view">
+  <div class="wrap">
+    <h1>Your practice report</h1>
+    <p class="sub" id="report-sub"></p>
+    <div id="report-body"></div>
+    <!-- TODO(spec§8): export format is the working assumption (JSON + print view). -->
+    <div class="tools-row no-print">
+      <button class="ghost" onclick="App.exportJSON()">⬇ Download session (JSON)</button>
+      <button class="ghost" onclick="window.print()">🖨 Print report</button>
+      <button class="ghost" onclick="location.reload()">↺ New session</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/prompts.js"></script>
+<script src="js/scenarios/scenario1-dismissive.js"></script>
+<script src="js/scenarios/scenario2-rushed.js"></script>
+<script src="js/scenarios/scenario3-confusing.js"></script>
+<script src="js/scenarios/scenario4-hard-to-describe.js"></script>
+<script src="js/scenarios/scenario5-judgmental.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
