@@ -1,7 +1,7 @@
 // App configuration. Researcher-editable.
 window.PACE_CONFIG = {
   // Deployed Cloudflare Worker URL. Set after `wrangler deploy`.
-  PROXY_URL: 'https://pace-proxy.YOUR-SUBDOMAIN.workers.dev',
+  PROXY_URL: 'https://pace-proxy.pace-formative.workers.dev',
 
   // Hard caps — DESIGN_SPEC.md §4. Do not change without flagging a spec deviation.
   HARD_CAP_PARTICIPANT_TURNS: 12,
