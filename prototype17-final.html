@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACE Communication Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+* { font-family:'Plus Jakarta Sans',sans-serif; box-sizing:border-box; }
+
+:root{
+  --P:#16a34a; --P-bg:#f0fdf4; --P-border:#bbf7d0; --P-text:#14532d;
+  --A:#ca8a04; --A-bg:#fefce8; --A-border:#fde68a; --A-text:#713f12;
+  --C:#2563eb; --C-bg:#eff6ff; --C-border:#bfdbfe; --C-text:#1e3a8a;
+  --E:#db2777; --E-bg:#fdf2f8; --E-border:#fbcfe8; --E-text:#831843;
+  --rc-ink:#0f1923; --rc-ink-soft:#3d4f5e; --rc-ink-mute:#7a909f;
+  --rc-page:#f5f2ec; --rc-paper:#fdfbf7; --rc-rule:#ddd8ce; --rc-gold:#c9922a; --rc-gold-bg:#fdf3e0;
+}
+
+@keyframes fadeUp   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes bounceIn { 0%{transform:scale(.88);opacity:0} 65%{transform:scale(1.03)} 100%{transform:scale(1);opacity:1} }
+@keyframes dotBounce{ 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+@keyframes popBadge { 0%{transform:scale(1)} 40%{transform:scale(1.45)} 100%{transform:scale(1)} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes slideR   { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:translateX(0)} }
+@keyframes pulseRing{ 0%{box-shadow:0 0 0 0 rgba(217,119,6,.35)} 100%{box-shadow:0 0 0 8px rgba(217,119,6,0)} }
+
+.fade-up  { animation:fadeUp .28s ease-out both }
+.fade-in  { animation:fadeIn .35s ease-out both }
+.bounce-in{ animation:bounceIn .38s cubic-bezier(.16,1,.3,1) both }
+.slide-r  { animation:slideR .28s ease-out both }
+
+.dot { width:7px;height:7px;border-radius:50%;background:#94a3b8;display:inline-block;animation:dotBounce 1.2s infinite }
+.dot:nth-child(2){animation-delay:.18s} .dot:nth-child(3){animation-delay:.36s}
+
+.bub-doc  { background:#fff;border:1px solid #e2e8f0;border-radius:16px 16px 16px 4px;box-shadow:0 1px 3px rgba(0,0,0,.07) }
+.bub-pat  { background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:16px 16px 4px 16px;box-shadow:0 2px 8px rgba(37,99,235,.25) }
+.bub-retry{ background:#fff;border:1.5px dashed #93c5fd;border-radius:16px 16px 16px 4px }
+
+.pbadge { width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;transition:all .25s;flex-shrink:0 }
+.pb-off  { background:#f1f5f9;color:#94a3b8 }
+.pb-P    { background:#dcfce7;color:#15803d;box-shadow:0 0 0 2px #16a34a }
+.pb-A    { background:#fef9c3;color:#a16207;box-shadow:0 0 0 2px #ca8a04 }
+.pb-C    { background:#dbeafe;color:#1d4ed8;box-shadow:0 0 0 2px #2563eb }
+.pb-E    { background:#fce7f3;color:#9d174d;box-shadow:0 0 0 2px #db2777 }
+.pb-done { background:#22c55e;color:#fff;animation:popBadge .4s ease-out }
+
+.pcard { border:2px solid #e2e8f0;border-radius:16px;cursor:pointer;transition:all .18s }
+.pcard:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.09) }
+.pcard.sel { border-color:#2563eb;background:#eff6ff }
+
+.mcard { border:2px solid #e2e8f0;border-radius:16px;cursor:pointer;transition:all .18s;padding:1.1rem }
+.mcard:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.09) }
+.mcard.sel { border-color:#2563eb;background:#eff6ff }
+
+#chat-area::-webkit-scrollbar { width:3px }
+#chat-area::-webkit-scrollbar-thumb { background:#e2e8f0;border-radius:2px }
+#edu-scroll::-webkit-scrollbar, #setup-scroll::-webkit-scrollbar { width:3px }
+#edu-scroll::-webkit-scrollbar-thumb, #setup-scroll::-webkit-scrollbar-thumb { background:#e2e8f0;border-radius:2px }
+#rc-log::-webkit-scrollbar, #rc-fb::-webkit-scrollbar { width:3px }
+#rc-log::-webkit-scrollbar-thumb, #rc-fb::-webkit-scrollbar-thumb { background:#e2e8f0;border-radius:2px }
+
+/* stage stepper */
+.stepper { display:flex; gap:4px; width:100%; }
+.step-seg { flex:1; height:4px; border-radius:2px; background:#e2e8f0; transition:background .3s; position:relative; }
+.step-seg.done { background:#93c5fd; }
+.step-seg.current { background:#2563eb; }
+.step-seg.current::after { content:''; position:absolute; top:-2px; left:0; right:0; height:8px; border-radius:4px; background:#2563eb; opacity:.25; animation:pulseRing 1.6s infinite; }
+
+/* wrap-up banner */
+.wrap-banner { display:flex; justify-content:center; }
+.wrap-banner-inner { background:#fff7ed; border:1.5px dashed #fdba74; color:#9a3412; font-size:.74rem; font-weight:600; padding:.55rem 1rem; border-radius:10px; max-width:80%; text-align:center; line-height:1.5; }
+
+/* ── report card (paper) aesthetic ── */
+.rc-wrap { background:var(--rc-page); color:var(--rc-ink); font-family:'Plus Jakarta Sans',sans-serif; }
+.rc-head { font-family:'Playfair Display',serif; }
+.rc-mono { font-family:'DM Mono',monospace; }
+.rc-callout {
+  background:var(--rc-paper); border:1.5px solid var(--rc-rule); border-left:5px solid var(--rc-gold);
+  border-radius:4px; padding:1rem 1.3rem; font-size:.84rem; color:var(--rc-ink-soft); line-height:1.65;
+}
+.rc-chip { display:inline-flex; align-items:center; gap:.4rem; background:var(--rc-ink); color:var(--rc-page); font-family:'DM Mono',monospace; font-size:.68rem; padding:.3rem .75rem; border-radius:20px; letter-spacing:.03em; }
+.rc-card { background:var(--rc-paper); border:1.5px solid var(--rc-rule); border-radius:8px; padding:.9rem 1rem; }
+.rc-tier { font-family:'DM Mono',monospace; font-size:.62rem; font-weight:600; letter-spacing:.05em; text-transform:uppercase; padding:.22rem .6rem; border-radius:20px; display:inline-block; }
+.rc-section-head { display:flex; align-items:baseline; gap:.7rem; margin-bottom:.8rem; }
+.rc-section-head h2 { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:600; color:var(--rc-ink); }
+.rc-rule-line { flex:1; height:1px; background:var(--rc-rule); }
+.rc-log-bub { border-radius:12px; padding:.6rem .85rem; font-size:.78rem; line-height:1.55; }
+.rc-log-bub.doc { background:#fff; border:1px solid #e8e2d5; margin-right:2rem; }
+.rc-log-bub.pat { background:#eef1fb; border:1px solid #dbe0f5; margin-left:2rem; }
+.rc-ann-row { cursor:pointer; }
+.rc-ann-row.selected .rc-log-bub { box-shadow:0 0 0 2.5px var(--rc-gold), 0 4px 12px rgba(0,0,0,.1); }
+.rc-ann-row:hover .rc-log-bub { filter:brightness(.98); }
+mark.hl-P{background:rgba(22,163,74,.18);color:var(--P-text);border-radius:3px;padding:0 2px}
+mark.hl-A{background:rgba(202,138,4,.18);color:var(--A-text);border-radius:3px;padding:0 2px}
+mark.hl-C{background:rgba(37,99,235,.18);color:var(--C-text);border-radius:3px;padding:0 2px}
+mark.hl-E{background:rgba(219,39,119,.18);color:var(--E-text);border-radius:3px;padding:0 2px}
+</style>
+</head>
+
+<body style="height:100vh;overflow:hidden;display:flex;flex-direction:column;background:#f8fafc">
+
+<!-- ═══════════════════ 1. EDUCATION ═══════════════════ -->
+<div id="v-education" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+  <div id="edu-scroll" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:2.5rem 1rem 1rem">
+  <div style="width:100%;max-width:680px" class="fade-in">
+
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="width:60px;height:60px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:16px;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,99,235,.35)">
+        <i class="fas fa-stethoscope" style="color:#fff;font-size:1.4rem"></i>
+      </div>
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#2563eb;margin-bottom:.4rem">Before you practice</div>
+      <h1 style="font-size:1.85rem;font-weight:800;color:#0f172a;margin:0 0 .5rem">What is PACE?</h1>
+      <p style="color:#64748b;font-size:.88rem;margin:0;max-width:520px;margin:0 auto">A communication framework that trains <em>you</em>, the patient — not your doctor — to get more out of every visit.</p>
+    </div>
+
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.3rem 1.4rem;margin-bottom:1.4rem;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <p style="font-size:.85rem;color:#374151;line-height:1.7;margin:0 0 .8rem">Most communication training in healthcare is aimed at clinicians. <strong>PACE flips that.</strong> Developed by Dr. Donald Cegala at Ohio State University, it trains patients to participate actively in their own medical visits — asking more questions, sharing fuller symptom details, and checking that instructions landed correctly.</p>
+      <p style="font-size:.85rem;color:#374151;line-height:1.7;margin:0">It was tested in a randomized trial across 25 family physicians and 150 patients, and later adapted into e-learning and workshop formats. This tool is one more delivery format in that lineage — practice through role-play before it matters in a real appointment.</p>
+    </div>
+
+    <!-- evidence stats -->
+    <div style="background:linear-gradient(135deg,#1d4ed8,#2563eb);border-radius:16px;padding:1.2rem 1.4rem;margin-bottom:1.6rem;color:#fff">
+      <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.75;margin-bottom:.7rem">What the research found</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.8rem">
+        <div>
+          <div style="font-size:1.5rem;font-weight:800">6.9</div>
+          <div style="font-size:.72rem;opacity:.85;line-height:1.4">questions per visit for patients coached directly — vs. 4.5 for those given a written guide alone</div>
+        </div>
+        <div>
+          <div style="font-size:1.5rem;font-weight:800">3.7</div>
+          <div style="font-size:.72rem;opacity:.85;line-height:1.4">checking / summarizing statements per visit — vs. 1.5 with a written guide alone</div>
+        </div>
+      </div>
+      <div style="font-size:.74rem;opacity:.85;line-height:1.5;border-top:1px solid rgba(255,255,255,.25);padding-top:.7rem">Visits did <strong>not</strong> take longer. The active ingredient wasn't reading about PACE — it was practicing it. <span style="opacity:.7">(Cegala et al., 2000; Socha McGee &amp; Cegala, 1998)</span></div>
+    </div>
+
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:.8rem">The four skills</div>
+
+    <div id="edu-pace-cards" style="display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.8rem"></div>
+
+    <button onclick="showView('v-setup')"
+      style="width:100%;padding:1rem;border-radius:12px;font-weight:700;font-size:.9rem;color:#fff;background:#2563eb;border:none;cursor:pointer;transition:background .2s"
+      onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+      I understand PACE — Start Training <i class="fas fa-arrow-right" style="margin-left:.4rem"></i>
+    </button>
+  </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ 2. SETUP ═══════════════════ -->
+<div id="v-setup" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+  <div id="setup-scroll" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 1rem">
+  <div style="width:100%;max-width:640px" class="fade-in">
+
+    <div style="text-align:center;margin-bottom:1.8rem">
+      <h1 style="font-size:1.6rem;font-weight:800;color:#0f172a;margin:0 0 .35rem">Set up your practice session</h1>
+      <p style="color:#64748b;font-size:.83rem;margin:0">Choose how you want to practice, then pick a doctor.</p>
+    </div>
+
+    <div style="font-size:.75rem;font-weight:700;color:#374151;margin-bottom:.7rem">1 · Choose your practice mode</div>
+    <div id="mode-list" style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.6rem"></div>
+
+    <div style="font-size:.75rem;font-weight:700;color:#374151;margin-bottom:.7rem">2 · Choose your practice doctor</div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.1rem;margin-bottom:1.4rem;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div id="persona-list" style="display:flex;flex-direction:column;gap:.6rem"></div>
+    </div>
+
+    <div id="setup-expect" style="font-size:.75rem;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:.7rem .9rem;margin-bottom:1.2rem;line-height:1.5;display:none"></div>
+
+    <button id="start-btn" onclick="startSession()" disabled
+      style="width:100%;padding:1rem;border-radius:12px;font-weight:700;font-size:.9rem;color:#fff;background:#2563eb;border:none;cursor:pointer;transition:all .2s;opacity:.45">
+      Begin Practice Session <i class="fas fa-play" style="margin-left:.4rem"></i>
+    </button>
+    <button onclick="showView('v-education')" style="width:100%;padding:.7rem;margin-top:.6rem;border-radius:12px;font-weight:600;font-size:.78rem;color:#64748b;background:none;border:none;cursor:pointer">
+      <i class="fas fa-arrow-left" style="margin-right:.3rem"></i>Back to PACE overview
+    </button>
+  </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ 3. PRACTICE ═══════════════════ -->
+<div id="v-practice" style="display:none;flex-direction:column;height:100vh">
+
+  <div style="background:#fff;border-bottom:1px solid #e2e8f0;flex-shrink:0">
+    <div style="padding:.7rem 1.2rem .55rem;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:.7rem;min-width:0">
+        <div id="doc-ava" style="width:38px;height:38px;border-radius:50%;background:#eff6ff;border:1.5px solid #bfdbfe;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0"></div>
+        <div style="min-width:0">
+          <div id="doc-name" style="font-weight:700;font-size:.85rem;color:#0f172a"></div>
+          <div id="doc-sub"  style="font-size:.7rem;color:#94a3b8"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+        <div id="mode-controls" style="display:flex;align-items:center;gap:.4rem"></div>
+        <button id="end-btn" onclick="requestEnd()" style="padding:.4rem .8rem;border-radius:9px;font-size:.7rem;font-weight:700;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;cursor:pointer;white-space:nowrap">End</button>
+      </div>
+    </div>
+    <div style="padding:0 1.2rem .55rem">
+      <div class="stepper" id="stage-stepper"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:.3rem">
+        <span id="stage-label" style="font-size:.65rem;color:#94a3b8;font-weight:600"></span>
+        <span id="expect-label" style="font-size:.65rem;color:#94a3b8"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="chat-area" style="flex:1;overflow-y:auto;padding:1.2rem 1rem;display:flex;flex-direction:column;gap:.9rem"></div>
+
+  <div style="background:#fff;border-top:1px solid #e2e8f0;padding:.8rem 1rem;flex-shrink:0;display:flex;gap:.6rem;align-items:center">
+    <input id="chat-input" type="text" placeholder="Respond to the doctor…"
+      style="flex:1;padding:.7rem 1rem;border:2px solid #e2e8f0;border-radius:12px;font-size:.85rem;color:#1e293b;outline:none;transition:border-color .2s"
+      onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e2e8f0'"
+      onkeypress="if(event.key==='Enter'&&!this.disabled) sendMsg()">
+    <button id="send-btn" onclick="sendMsg()"
+      style="width:42px;height:42px;border-radius:12px;background:#2563eb;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0"
+      onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+      <i class="fas fa-paper-plane" style="color:#fff;font-size:.8rem"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════ INTERVENTION MODAL (guided mode) ═══════════════════ -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);z-index:999;align-items:center;justify-content:center;padding:1rem">
+  <div class="bounce-in" style="background:#fff;border-radius:20px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.2);overflow:hidden">
+    <div id="modal-hdr" style="padding:1.1rem 1.3rem">
+      <div style="display:flex;align-items:center;gap:.7rem">
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center">
+          <i class="fas fa-graduation-cap" style="color:#fff;font-size:1rem"></i>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:.85rem;color:#fff">PACE Coach</div>
+          <div id="modal-skill-lbl" style="font-size:.72rem;color:rgba(255,255,255,.85)"></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:.8rem 1.3rem;background:#f8fafc;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:.4rem">Doctor said:</div>
+      <div id="modal-doc-msg" style="font-size:.82rem;color:#475569;font-style:italic;line-height:1.5"></div>
+    </div>
+    <div style="padding:1.1rem 1.3rem">
+      <div id="modal-feedback" style="font-size:.83rem;color:#374151;line-height:1.55;margin-bottom:.9rem"></div>
+      <div id="modal-sugg-box" style="border-radius:10px;padding:.8rem 1rem;margin-bottom:1.1rem">
+        <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.4rem;opacity:.75">💬 Try saying something like:</div>
+        <div id="modal-suggestion" style="font-size:.82rem;font-style:italic;line-height:1.5"></div>
+      </div>
+      <div style="display:flex;gap:.6rem">
+        <button id="try-again-btn" onclick="tryAgain()"
+          style="flex:1;padding:.8rem;border-radius:10px;font-weight:700;font-size:.82rem;color:#fff;border:none;cursor:pointer;transition:opacity .15s"
+          onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+          ↩ Try Again
+        </button>
+        <button onclick="continueWithout()"
+          style="flex:1;padding:.8rem;border-radius:10px;font-weight:600;font-size:.82rem;color:#64748b;background:#f1f5f9;border:none;cursor:pointer;transition:background .15s"
+          onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+          Continue →
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ ANALYZING OVERLAY ═══════════════════ -->
+<div id="v-loading" style="display:none;position:fixed;inset:0;background:rgba(248,250,252,.96);z-index:998;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem">
+  <div style="width:44px;height:44px;border-radius:50%;border:3.5px solid #e2e8f0;border-top-color:#2563eb;animation:spin 1s linear infinite"></div>
+  <div style="text-align:center">
+    <div style="font-weight:700;color:#0f172a;font-size:.95rem" id="loading-title">Wrapping up…</div>
+    <div style="color:#64748b;font-size:.78rem;margin-top:.25rem" id="loading-sub">One moment</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ 4a. COMPLETION (guided mode) ═══════════════════ -->
+<div id="v-complete" style="display:none;flex:1;overflow-y:auto;background:#f8fafc">
+<div style="max-width:580px;margin:0 auto;padding:2.5rem 1rem 3rem">
+
+  <div class="fade-in" style="text-align:center;margin-bottom:1.6rem">
+    <div style="font-size:3.5rem;margin-bottom:.8rem">🎓</div>
+    <h1 style="font-size:1.75rem;font-weight:800;color:#0f172a;margin:0 0 .4rem">Practice Session Complete</h1>
+    <p style="color:#64748b;font-size:.85rem;margin:0" id="complete-sub">Here's what you practiced today</p>
+  </div>
+
+  <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.4rem;font-size:.78rem;color:#1e3a8a;line-height:1.6">
+    <strong>No perfect score to chase here.</strong> Even in the studies behind PACE, well-coached patients averaged under 7 questions and 4 checking statements per real visit — not four-for-four mastery every single time. This checklist just shows what you tried today.
+  </div>
+
+  <div id="pace-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem"></div>
+
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.2rem;margin-bottom:1.2rem">
+    <div style="font-weight:700;font-size:.85rem;color:#374151;margin-bottom:.9rem">Your PACE Reminder</div>
+    <div id="pace-reminder" style="display:flex;flex-direction:column;gap:.75rem"></div>
+  </div>
+
+  <button onclick="location.reload()"
+    style="width:100%;padding:1rem;border-radius:12px;font-weight:700;font-size:.9rem;color:#fff;background:#2563eb;border:none;cursor:pointer;transition:background .2s"
+    onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+    <i class="fas fa-redo" style="margin-right:.4rem"></i>Practice Again
+  </button>
+</div>
+</div>
+
+<!-- ═══════════════════ 4b. REVIEW / REPORT (free mode) ═══════════════════ -->
+<div id="v-review" class="rc-wrap" style="display:none;flex-direction:column;height:100vh">
+
+  <div style="background:var(--rc-paper);border-bottom:1.5px solid var(--rc-rule);padding:.9rem 1.3rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div>
+      <div class="rc-mono" style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--rc-ink-mute);margin-bottom:.2rem">Patient Communication Training</div>
+      <div class="rc-head" style="font-weight:800;font-size:1.15rem;color:var(--rc-ink)">Session Report</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <span id="rc-chip" class="rc-chip"></span>
+      <button onclick="location.reload()" style="padding:.45rem .85rem;border-radius:9px;font-size:.72rem;font-weight:600;color:var(--rc-ink-soft);background:transparent;border:1.5px solid var(--rc-rule);cursor:pointer">
+        <i class="fas fa-redo" style="margin-right:.3rem;font-size:.62rem"></i>Practice Again
+      </button>
+    </div>
+  </div>
+
+  <div style="flex:1;overflow-y:auto">
+    <div style="max-width:900px;margin:0 auto;padding:1.3rem 1.3rem 3rem">
+
+      <div class="rc-callout fade-up" style="margin-bottom:1.4rem">
+        <strong style="color:var(--rc-ink)">There's no perfect score.</strong> Even in the studies that validated PACE, well-coached patients averaged about 7 questions and 4 checking statements per visit — not every skill maxed out every time. This report shows real moments from <em>this</em> conversation so you know what to try next time, not a target to chase.
+      </div>
+
+      <div id="rc-summary" style="margin-bottom:1.6rem"></div>
+
+      <div id="rc-pace-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:1.8rem"></div>
+
+      <div style="display:flex;gap:1.4rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:300px">
+          <div class="rc-section-head">
+            <h2>Conversation Log</h2>
+            <div class="rc-rule-line"></div>
+          </div>
+          <div id="rc-log" style="max-height:520px;overflow-y:auto;display:flex;flex-direction:column;gap:.65rem;padding-right:.4rem"></div>
+        </div>
+        <div style="flex:1;min-width:300px">
+          <div class="rc-section-head">
+            <h2>Coach Feedback</h2>
+            <div class="rc-rule-line"></div>
+          </div>
+          <div id="rc-fb" style="max-height:520px;overflow-y:auto">
+            <div id="rc-fb-empty" style="text-align:center;color:var(--rc-ink-mute);padding:2.5rem 1rem">
+              <div style="font-size:1.8rem;margin-bottom:.6rem">👆</div>
+              <div style="font-size:.82rem;font-weight:600;color:var(--rc-ink-soft);margin-bottom:.25rem">Click a highlighted message</div>
+              <div style="font-size:.73rem;line-height:1.5;max-width:220px;margin:0 auto">Messages with a colored border have feedback from your coach</div>
+            </div>
+            <div id="rc-fb-content" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:2rem" id="rc-summary-band"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCRIPT ═══════════════════ -->
+<script>
+// ─────────────────────────────────────────────────
+// MTS-DIALOG REFERENCE EXAMPLES
+// ─────────────────────────────────────────────────
+const MTS_REF = `
+REFERENCE — Ideal patient–doctor dialogue examples (based on MTS-Dialog dataset style):
+
+EXAMPLE 1 — Strong P (Presenting detailed symptoms):
+Doctor: What brings you in today?
+Patient: I've had a severe throbbing headache for about three weeks, mostly on the right side. Pain is around 7 out of 10. It gets worse in bright light, hits me most afternoons, and lasts 2–4 hours. I've tried ibuprofen — it barely touches it. I work at a computer all day and it's really affecting my focus and productivity.
+
+EXAMPLE 2 — Strong A (Asking questions):
+Doctor: Given your symptoms, I suspect tension-type headaches and would like to start you on amitriptyline as a prophylactic.
+Patient: I want to make sure I understand — what does "prophylactic" mean in this context? And I've never taken amitriptyline before. Is it a painkiller or something different? What side effects should I watch for?
+
+EXAMPLE 3 — Strong C (Checking understanding):
+Doctor: Take one 10mg tablet at bedtime. We'll start low. Come back in six weeks so I can reassess.
+Patient: Let me make sure I have this right — I take one pill at bedtime, starting at 10mg, and I schedule a follow-up in six weeks. If symptoms get significantly worse before then, should I call? And I shouldn't stop taking it even if I start feeling better, right?
+
+EXAMPLE 4 — Strong E (Expressing concerns):
+Doctor: I'd like to start you on a daily blood pressure medication called lisinopril.
+Patient: I'm open to trying it. I do have a few concerns though — I've read that some blood pressure medications cause a persistent cough. Is that common with lisinopril? I'm also worried about cost since my deductible is high. Is there a generic? I also run marathons — will it affect my exercise?
+
+EXAMPLE 5 — Full consultation showing PACE throughout:
+Doctor: Good morning. What brings you in today?
+Patient: I've had chest pressure for about four days — feels like something heavy sitting on my chest, about 5–6 out of 10. It comes on when I climb stairs or walk fast. It doesn't stop right away when I rest. I also feel slightly short of breath. I noticed it goes to my left arm sometimes. I haven't taken anything for it yet.
+Doctor: That's important. I'd like to run an EKG and check your cardiac enzymes today.
+Patient: I want to understand — what is an EKG exactly, and what are cardiac enzymes? Are you concerned this might be my heart?
+Doctor: An EKG records the heart's electrical activity — painless, just a few minutes. Cardiac enzymes are proteins released when heart muscle is stressed. We need to rule out cardiac involvement given your symptoms.
+Patient: So just to make sure I follow — the EKG will check my heart's electrical activity and the blood test looks for signs of muscle stress. You'll have a clearer picture once those results come back. Is that right?
+Doctor: That's exactly right. Based on results, we may discuss a stress test or referral.
+Patient: That makes sense. I do want to mention — I have a trip planned in two weeks and I'm worried about traveling. Also, I don't have the best insurance. If we need more tests, are there lower-cost options?
+`;
+
+// ─────────────────────────────────────────────────
+// PERSONAS — each maps to a challenge cluster from the
+// pre-interview survey (n=104) rather than a generic style
+// ─────────────────────────────────────────────────
+const PERSONAS = {
+  rushed: { key:'rushed', name:'Dr. Patel', title:'Primary Care · Rushed visit', emoji:'⏱️', challenge:'Time pressure',
+    diff:'Normal', diffColor:'#92400e', diffBg:'#fef3c7', stars:3,
+    detail:'Always mentions being busy. Jumps between topics before you finish. Ends the visit before you\'ve asked everything.',
+    sys:`You are Dr. Patel, a primary care doctor whose visits reflect a pattern patients frequently described: feeling rushed, like the appointment ended before they could raise everything on their mind.
+Progress: greeting → chief_complaint → history_taking → assessment → treatment_plan → closing.
+STRICT RULES (to create realistic coaching opportunities):
+- Keep each turn to 1–2 sentences
+- Reference time pressure naturally: "Let me be quick here", "I have patients waiting after this", "We're a bit behind today"
+- Move to the next topic before fully exploring the last one
+- Give treatment recommendations without much explanation
+- Do NOT pause for questions or invite the patient to say more — the patient has to interject to be heard
+- After 4-5 of your turns, move the stage to "closing" and start wrapping up the visit
+Respond ONLY as JSON: {"message":"...","stage":"greeting|chief_complaint|history_taking|assessment|treatment_plan|closing"}` },
+  dismissive: { key:'dismissive', name:'Dr. Williams', title:'General Practice · Minimizes concerns', emoji:'😐', challenge:'Feeling unheard / dismissed',
+    diff:'Hard', diffColor:'#991b1b', diffBg:'#fee2e2', stars:4,
+    detail:'Doesn\'t directly acknowledge what you say. Tends to redirect to an unrelated explanation (e.g. weight, stress, aging) instead of engaging with your actual concern.',
+    sys:`You are Dr. Williams, a general practitioner whose visits reflect a pattern patients frequently described: feeling unheard, brushed off, or told their concern wasn't significant.
+Progress: greeting → chief_complaint → history_taking → assessment → treatment_plan → closing.
+STRICT RULES (to create realistic coaching opportunities):
+- Keep each turn to 2–3 sentences
+- When the patient describes a concern, do not fully acknowledge it — redirect toward a generic alternate explanation (e.g. stress, weight, normal aging) instead of engaging with what they actually said
+- Occasionally imply the concern is less serious than the patient thinks ("That's pretty common, I wouldn't worry about it")
+- Do NOT invite the patient to elaborate or ask if they have more concerns
+- Stay polite in tone — this is subtle minimization, not open hostility
+- After 4-5 of your turns, move the stage to "closing" and start wrapping up the visit
+Respond ONLY as JSON: {"message":"...","stage":"greeting|chief_complaint|history_taking|assessment|treatment_plan|closing"}` },
+  jargon: { key:'jargon', name:'Dr. Chen', title:'Internal Medicine · Under-explains', emoji:'👨‍⚕️', challenge:'Insufficient explanation',
+    diff:'Normal', diffColor:'#92400e', diffBg:'#fef3c7', stars:3,
+    detail:'Talks in precise clinical language. Gives instructions and dosage changes without checking that they landed clearly.',
+    sys:`You are Dr. Chen, a precise internist whose visits reflect a pattern patients frequently described: not understanding the information or instructions they were given.
+Progress: greeting → chief_complaint → history_taking → assessment → treatment_plan → closing.
+STRICT RULES (to create realistic coaching opportunities):
+- Keep each turn to 2–3 sentences
+- Use medical terminology naturally without defining it: etiology, differential, contraindicated, idiopathic, prognosis, prophylactic, titrate, sequelae, etc.
+- When changing a medication or dosage, state the change precisely but briefly, without spelling out what the patient should watch for
+- Do NOT check whether the patient understood or ask if they have questions
+- Remain clinically efficient — no warmth, no over-explaining
+- After 4-5 of your turns, move the stage to "closing" and start wrapping up the visit
+Respond ONLY as JSON: {"message":"...","stage":"greeting|chief_complaint|history_taking|assessment|treatment_plan|closing"}` },
+  followup_gap: { key:'followup_gap', name:'Dr. Nguyen', title:'Family Medicine · Vague on next steps', emoji:'📋', challenge:'Scheduling / logistics / follow-up gaps',
+    diff:'Normal', diffColor:'#92400e', diffBg:'#fef3c7', stars:3,
+    detail:'Mentions next steps (referrals, labs, refills) vaguely — doesn\'t say who will do what, when, or how to follow up if nothing happens.',
+    sys:`You are Dr. Nguyen, a family medicine physician whose visits reflect a pattern patients frequently described: unclear or unresolved next steps — referrals, prior authorizations, prescription refills, or follow-up messages that seemed to go nowhere.
+Progress: greeting → chief_complaint → history_taking → assessment → treatment_plan → closing.
+STRICT RULES (to create realistic coaching opportunities):
+- Keep each turn to 2–3 sentences
+- When mentioning next steps (a referral, a lab order, a prescription, a follow-up), be vague about logistics: don't specify who initiates it, expected timing, or what to do if it doesn't happen
+- Do not proactively confirm that a system action (referral submitted, chart updated, refill sent) actually occurred
+- Do NOT invite the patient to ask how to follow up if something falls through
+- Tone stays pleasant and unhurried — the gap is in logistics, not warmth
+- After 4-5 of your turns, move the stage to "closing" and start wrapping up the visit
+Respond ONLY as JSON: {"message":"...","stage":"greeting|chief_complaint|history_taking|assessment|treatment_plan|closing"}` },
+  cost_blind: { key:'cost_blind', name:'Dr. Reyes', title:'Primary Care · Doesn\'t raise cost', emoji:'💳', challenge:'Cost / billing surprises',
+    diff:'Normal', diffColor:'#92400e', diffBg:'#fef3c7', stars:3,
+    detail:'Recommends labs, imaging, or medication without ever raising price, insurance coverage, or lower-cost alternatives — you have to bring it up yourself.',
+    sys:`You are Dr. Reyes, a primary care physician whose visits reflect a pattern patients frequently described: being surprised by the cost of care because it was never discussed during the visit.
+Progress: greeting → chief_complaint → history_taking → assessment → treatment_plan → closing.
+STRICT RULES (to create realistic coaching opportunities):
+- Keep each turn to 2–3 sentences
+- When recommending labs, imaging, or medication, never mention cost, insurance coverage, or lower-cost alternatives unprompted
+- If the patient doesn't raise cost themselves, proceed as if affordability is a non-issue
+- Do NOT ask about insurance, financial concerns, or ability to follow through on the plan
+- Tone is competent and pleasant — the gap is specifically about cost, not overall bedside manner
+- After 4-5 of your turns, move the stage to "closing" and start wrapping up the visit
+Respond ONLY as JSON: {"message":"...","stage":"greeting|chief_complaint|history_taking|assessment|treatment_plan|closing"}` }
+};
+
+// ─────────────────────────────────────────────────
+// PACE INFO
+// ─────────────────────────────────────────────────
+const PACE = {
+  P: { label:'Present your symptoms', origLabel:'Provide', color:'#15803d', bg:'#f0fdf4', border:'#bbf7d0', accent:'#16a34a',
+    desc:'Share detailed info: location, timing, severity, what makes it better or worse, what you\'ve tried, how it affects your life, and what you hope the doctor can do.',
+    why:'Doctors need complete information to diagnose accurately. More detail — especially elaboration, not just longer answers — leads to better care.',
+    example:'"It\'s a dull ache on the lower right side, comes and goes over the past week, worse after eating. I\'ve tried antacids — no real help. I\'m hoping to find out if I need any tests."' },
+  A: { label:'Ask questions', origLabel:'Ask', color:'#a16207', bg:'#fefce8', border:'#fde68a', accent:'#ca8a04',
+    desc:'Ask about your condition, tests, medications, or other treatments whenever something isn\'t clear. If you have more than three questions, star your top ones so you ask those first.',
+    why:'Trained patients who asked more questions also got more information back per question — not just more talking, more efficient information exchange.',
+    example:'"Could you explain what \'hypertension\' means? And why this specific medication over others?"' },
+  C: { label:'Check your understanding', origLabel:'Clarify', color:'#1d4ed8', bg:'#eff6ff', border:'#bfdbfe', accent:'#2563eb',
+    desc:'Ask for a simpler explanation when needed, repeat instructions back in your own words (teach-back), and summarize the plan at the end of the visit.',
+    why:'This is the hardest PACE skill to build — but summarizing was the one move that reliably improved outcomes in the original trial. Worth the extra practice.',
+    example:'"So just to confirm — I take one pill twice a day with food for 10 days, even if I feel better sooner. Is that right?"' },
+  E: { label:'Express concerns', origLabel:'Express', color:'#9d174d', bg:'#fdf2f8', border:'#fbcfe8', accent:'#db2777',
+    desc:'Voice worries about the condition or the treatment — cost, side effects, lifestyle fit. And if you don\'t think you can follow the plan, say so now rather than quietly not doing it.',
+    why:'Doctors want plans that fit your life. Speaking up — especially about adherence barriers — lets them offer an alternative before it becomes a problem.',
+    example:'"I\'m worried about the cost. Is there a generic version? Also I run regularly — will this medication affect that?"' }
+};
+
+const STAGES = [
+  {k:'greeting', l:'Check-in'},
+  {k:'chief_complaint', l:'Symptoms'},
+  {k:'history_taking', l:'History'},
+  {k:'assessment', l:'Assessment'},
+  {k:'treatment_plan', l:'Plan'},
+  {k:'closing', l:'Wrap-up'}
+];
+function stageIdx(k){ const i = STAGES.findIndex(s=>s.k===k); return i<0?0:i; }
+
+const MODES = {
+  guided: { key:'guided', title:'Coached Practice', icon:'fa-graduation-cap',
+    blurb:'Your coach pauses in the moment to flag a PACE opportunity, then lets you try that exact line again before moving on.',
+    fit:'Best if this is your first time practicing.',
+    expect:'Ends once you\'ve had a chance to practice all 4 skills — usually 6–9 messages.' },
+  free: { key:'free', title:'Full Visit Simulation', icon:'fa-comments',
+    blurb:'Role-play the whole visit without interruptions, like a real appointment. Get a full report afterward.',
+    fit:'Best for simulating a real visit, or a second attempt after Coached Practice.',
+    expect:'You\'re in control — end whenever it feels natural, or after about 10–14 exchanges.' }
+};
+
+// ─────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────
+let S = {
+  mode: null, persona: null,
+  history: [], apiHist: [],
+  patTurns: 0, docTurns: 0,
+  stage: 'greeting', prevStage: 'greeting',
+  lastDocMsg: '',
+  coached: {P:false, A:false, C:false, E:false},
+  practiced:{P:false, A:false, C:false, E:false},
+  pendingMsg: '', pendingSkill: null, retryMode: false,
+  locked: false, ended: false,
+  annotations: [], selectedIdx: null
+};
+let selectedPersonaKey = null;
+let selectedModeKey = null;
+
+// ─────────────────────────────────────────────────
+// BUILD STATIC UI (education + setup)
+// ─────────────────────────────────────────────────
+function buildEduCards() {
+  const wrap = document.getElementById('edu-pace-cards');
+  Object.entries(PACE).forEach(([sk, info]) => {
+    const el = document.createElement('div');
+    el.style.cssText = `background:#fff;border:1px solid #e2e8f0;border-left:4px solid ${info.accent};border-radius:12px;padding:1rem 1.1rem`;
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem">
+        <div style="width:34px;height:34px;border-radius:10px;background:${info.bg};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:${info.color};flex-shrink:0">${sk}</div>
+        <div>
+          <div style="font-weight:700;font-size:.86rem;color:#0f172a">${info.label}</div>
+          <div style="font-size:.66rem;color:#94a3b8">Cegala's original term: "${info.origLabel}"</div>
+        </div>
+      </div>
+      <div style="font-size:.78rem;color:#475569;line-height:1.55;margin-bottom:.5rem">${info.desc}</div>
+      <div style="background:${info.bg};border:1px solid ${info.border};border-radius:8px;padding:.55rem .7rem;font-size:.75rem;color:${info.color};font-style:italic;line-height:1.5">${info.example}</div>
+    `;
+    wrap.appendChild(el);
+  });
+}
+
+function buildModeCards() {
+  const wrap = document.getElementById('mode-list');
+  Object.values(MODES).forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'mcard';
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+        <i class="fas ${m.icon}" style="color:#2563eb;font-size:1.1rem"></i>
+        <div style="font-weight:700;font-size:.85rem;color:#0f172a">${m.title}</div>
+      </div>
+      <div style="font-size:.74rem;color:#475569;line-height:1.5;margin-bottom:.5rem">${m.blurb}</div>
+      <div style="font-size:.68rem;color:#2563eb;font-weight:600">${m.fit}</div>
+    `;
+    el.onclick = () => {
+      document.querySelectorAll('#mode-list .mcard').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      selectedModeKey = m.key;
+      const ex = document.getElementById('setup-expect');
+      ex.style.display = 'block';
+      ex.innerHTML = `<i class="fas fa-info-circle" style="color:#2563eb;margin-right:.4rem"></i>${m.expect}`;
+      maybeEnableStart();
+    };
+    wrap.appendChild(el);
+  });
+}
+
+function buildPersonas() {
+  const list = document.getElementById('persona-list');
+  Object.entries(PERSONAS).forEach(([key, p]) => {
+    const el = document.createElement('div');
+    el.className = 'pcard';
+    el.id = `card-${key}`;
+    el.style.padding = '.9rem 1rem';
+    const filled = '★'.repeat(p.stars);
+    const empty  = '☆'.repeat(4 - p.stars);
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.7rem">
+        <span style="font-size:1.6rem;flex-shrink:0">${p.emoji}</span>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.15rem">
+            <span style="font-weight:700;font-size:.85rem;color:#0f172a">${p.name}</span>
+            <span style="font-size:.65rem;font-weight:700;padding:.15rem .55rem;border-radius:999px;background:${p.diffBg};color:${p.diffColor}">${p.diff}</span>
+          </div>
+          <div style="font-size:.7rem;color:#94a3b8;margin-bottom:.2rem">${p.title}</div>
+          <div style="font-size:.68rem;color:#2563eb;font-weight:600;margin-bottom:.25rem">Challenge: ${p.challenge}</div>
+          <div style="font-size:.75rem;color:#475569">${p.detail}</div>
+        </div>
+        <div style="font-size:.8rem;color:#fbbf24;letter-spacing:.05em;flex-shrink:0">${filled}<span style="opacity:.35">${empty}</span></div>
+      </div>`;
+    el.onclick = () => {
+      document.querySelectorAll('.pcard').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      selectedPersonaKey = key;
+      maybeEnableStart();
+    };
+    list.appendChild(el);
+  });
+}
+
+function maybeEnableStart() {
+  const btn = document.getElementById('start-btn');
+  const ok = selectedPersonaKey && selectedModeKey;
+  btn.disabled = !ok;
+  btn.style.opacity = ok ? '1' : '.45';
+}
+
+// ─────────────────────────────────────────────────
+// API
+// ─────────────────────────────────────────────────
+const API_HEADERS = {
+  'Content-Type': 'application/json',
+  'x-api-key': 'REPLACED_BY_PROXY_DO_NOT_PUT_KEYS_HERE',
+  'anthropic-version': '2023-06-01',
+  'anthropic-dangerous-direct-browser-access': 'true'
+};
+
+async function callClaude(system, messages, maxTokens=500) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST', headers: API_HEADERS,
+    body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:maxTokens, system, messages })
+  });
+  const data = await r.json();
+  if (!r.ok) { console.error('API error:', r.status, data); throw new Error(`API ${r.status}: ${data?.error?.message || JSON.stringify(data)}`); }
+  const text = data?.content?.[0]?.text;
+  if (!text) throw new Error('Empty API response');
+  return text;
+}
+
+async function callSingle(prompt, maxTokens=1400) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST', headers: API_HEADERS,
+    body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:maxTokens, messages:[{role:'user',content:prompt}] })
+  });
+  const data = await r.json();
+  if (!r.ok) { console.error('API error:', r.status, data); throw new Error(`API ${r.status}: ${data?.error?.message || JSON.stringify(data)}`); }
+  const text = data?.content?.[0]?.text;
+  if (!text) throw new Error('Empty API response');
+  return text;
+}
+
+function tryJSON(raw) {
+  if (!raw) return null;
+  let cleaned = raw.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'').trim();
+  const m = cleaned.match(/\{[\s\S]*\}/);
+  try { return JSON.parse(m ? m[0] : cleaned); }
+  catch(e) { console.warn('JSON parse failed:', cleaned.slice(0,200)); return null; }
+}
+
+function showAPIError(err) {
+  const area = document.getElementById('chat-area');
+  const d = document.createElement('div');
+  d.style.cssText = 'background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:.7rem 1rem;font-size:.78rem;color:#991b1b;margin:.3rem 0';
+  d.innerHTML = `<b>⚠ API Error:</b> ${esc(err.message)}<br><span style="opacity:.7;font-size:.7rem">Open DevTools (F12) → Console for details.</span>`;
+  area.appendChild(d); scrollChat();
+}
+
+// ─────────────────────────────────────────────────
+// STAGE STEPPER / HEADER
+// ─────────────────────────────────────────────────
+function renderStepper() {
+  const cur = stageIdx(S.stage);
+  const track = document.getElementById('stage-stepper');
+  track.innerHTML = STAGES.map((s,i) => {
+    let cls = 'step-seg';
+    if (i < cur) cls += ' done';
+    else if (i === cur) cls += ' current';
+    return `<div class="${cls}" title="${s.l}"></div>`;
+  }).join('');
+  document.getElementById('stage-label').textContent = `${STAGES[cur].l} · step ${cur+1} of ${STAGES.length}`;
+  document.getElementById('expect-label').textContent = S.mode === 'guided'
+    ? `${Object.values(S.coached).filter(Boolean).length}/4 skills practiced`
+    : `Turn ${S.patTurns}`;
+}
+
+function renderModeControls() {
+  const el = document.getElementById('mode-controls');
+  if (S.mode === 'guided') {
+    el.innerHTML = `
+      <div id="badge-P" class="pbadge pb-off" title="P: Present">P</div>
+      <div id="badge-A" class="pbadge pb-off" title="A: Ask">A</div>
+      <div id="badge-C" class="pbadge pb-off" title="C: Check">C</div>
+      <div id="badge-E" class="pbadge pb-off" title="E: Express">E</div>`;
+    updateBadges();
+  } else {
+    el.innerHTML = `<div style="font-size:.72rem;color:#94a3b8;font-weight:600">Turn <span id="turn-num">0</span>/14</div>`;
+  }
+}
+
+function updateBadges() {
+  if (S.mode !== 'guided') return;
+  ['P','A','C','E'].forEach(sk => {
+    const el = document.getElementById(`badge-${sk}`);
+    if (!el) return;
+    el.className = 'pbadge';
+    if (S.practiced[sk]) { el.classList.add('pb-done'); el.innerHTML='<i class="fas fa-check" style="font-size:8px"></i>'; }
+    else if (S.coached[sk]) { el.classList.add(`pb-${sk}`); el.textContent=sk; }
+    else { el.classList.add('pb-off'); el.textContent=sk; }
+  });
+}
+
+function updateTurnCounter() {
+  const t = document.getElementById('turn-num');
+  if (t) t.textContent = S.patTurns;
+}
+
+// ─────────────────────────────────────────────────
+// DOCTOR AGENT
+// ─────────────────────────────────────────────────
+async function doctorTurn() {
+  lock(true); showTyping(true);
+  try {
+    const raw  = await callClaude(S.persona.sys, S.apiHist, 400);
+    showTyping(false);
+
+    const json = tryJSON(raw);
+    let msg, stg;
+    if (json?.message) { msg = json.message; stg = json.stage || S.stage; }
+    else {
+      msg = raw.replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'').trim();
+      msg = msg.replace(/^\{.*?"message"\s*:\s*"/, '').replace(/",?\s*"stage".*\}.*$/, '').trim();
+      if (!msg || msg.length < 3) msg = raw.trim();
+      stg = S.stage;
+    }
+
+    S.prevStage = S.stage;
+    S.stage = stg; S.lastDocMsg = msg; S.docTurns++;
+    S.history.push({role:'doctor', content:msg});
+    S.apiHist.push({role:'assistant', content: json ? JSON.stringify(json) : `{"message":${JSON.stringify(msg)},"stage":"${stg}"}`});
+    addBubble('doctor', msg);
+    renderStepper();
+
+    if (S.prevStage !== 'closing' && S.stage === 'closing') {
+      addWrapBanner();
+    }
+  } catch(e) {
+    showTyping(false);
+    console.error('doctorTurn error:', e);
+    showAPIError(e);
+  }
+  lock(false);
+}
+
+function addWrapBanner() {
+  const area = document.getElementById('chat-area');
+  const d = document.createElement('div');
+  d.className = 'fade-up wrap-banner';
+  const txt = S.mode === 'free'
+    ? `🩺 ${S.persona.name} seems to be wrapping up the visit. End whenever you're ready using the End button above.`
+    : `🩺 ${S.persona.name} is wrapping up. This session will end after your last couple of replies.`;
+  d.innerHTML = `<div class="wrap-banner-inner">${txt}</div>`;
+  area.appendChild(d); scrollChat();
+}
+
+// ─────────────────────────────────────────────────
+// SEND MESSAGE — routes to guided or free flow
+// ─────────────────────────────────────────────────
+async function sendMsg() {
+  if (S.locked || S.ended) return;
+  const inp = document.getElementById('chat-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = '';
+  lock(true);
+
+  addBubble('patient', txt);
+  S.history.push({role:'patient', content:txt});
+  S.patTurns++;
+  updateTurnCounter();
+
+  if (S.mode === 'free') {
+    S.apiHist.push({role:'user', content:txt});
+    renderStepper();
+    if (S.patTurns >= 14) { await finishConvo(); return; }
+    await doctorTurn();
+    lock(false);
+    return;
+  }
+
+  // ── guided mode ──
+  if (S.retryMode) {
+    S.apiHist.push({role:'user', content:txt});
+    S.retryMode = false;
+    await handleRetry(txt);
+    return;
+  }
+
+  S.pendingMsg = txt;
+
+  if (allDone() || S.patTurns >= 10) {
+    S.apiHist.push({role:'user', content:txt});
+    await endGuidedSession(); return;
+  }
+
+  const intervention = await coachAnalyze(txt);
+
+  if (intervention?.should_intervene && !S.coached[intervention.pace_skill]) {
+    S.pendingSkill = intervention.pace_skill;
+    showModal(intervention);
+  } else {
+    S.apiHist.push({role:'user', content:txt});
+    await doctorTurn();
+    if (allDone() || S.patTurns >= 10) { await endGuidedSession(); return; }
+    renderStepper();
+    lock(false);
+  }
+}
+
+// ─────────────────────────────────────────────────
+// RETRY HANDLING (guided)
+// ─────────────────────────────────────────────────
+async function handleRetry(txt) {
+  const skill = S.pendingSkill;
+  S.coached[skill]   = true;
+  S.practiced[skill] = true;
+  updateBadges();
+
+  const fb = await genPosFeedback(txt, skill);
+  addCoachMsg(fb, skill, true);
+
+  await pause(500);
+
+  if (allDone() || S.patTurns >= 10) { await endGuidedSession(); return; }
+  await doctorTurn();
+  if (allDone() || S.patTurns >= 10) { await endGuidedSession(); return; }
+  renderStepper();
+  lock(false);
+}
+
+// ─────────────────────────────────────────────────
+// COACH ANALYSIS (guided)
+// ─────────────────────────────────────────────────
+async function coachAnalyze(patientMsg) {
+  const recentLines = S.history.slice(-6).map(m => `${m.role==='doctor'?'Doctor':'Patient'}: ${m.content}`).join('\n');
+  const coached = Object.entries(S.coached).filter(([k,v])=>v).map(([k])=>k).join(', ') || 'none';
+
+  const prompt = `You are a PACE communication skills coach monitoring a patient's medical consultation.
+
+PACE FRAMEWORK (developed by Dr. Donald Cegala, Ohio State University):
+P — Present: Patient shares detailed symptom information (duration, severity 1–10, triggers, impact on daily life, medications tried). Not just a one-word answer.
+A — Ask: Patient asks clarifying questions about medical jargon, diagnosis, test names, or treatment rationale when those appear in doctor's speech.
+C — Check: Patient summarizes/repeats back treatment instructions or information to verify they understood correctly.
+E — Express: Patient voices concerns, preferences, fears, or barriers (cost, side effects, lifestyle) regarding recommended treatment.
+
+REFERENCE — Examples of strong PACE communication:
+${MTS_REF}
+
+CURRENT CONSULTATION:
+Recent conversation:
+${recentLines}
+
+Doctor's last message: "${S.lastDocMsg}"
+Patient's latest message: "${patientMsg}"
+Consultation stage: ${S.stage}
+Patient turn #: ${S.patTurns}
+Skills already coached (skip these): ${coached}
+
+DECISION GUIDE:
+- Intervene for P if: patient gave only vague or very brief symptom description (no severity, no duration, no impact) — usually turns 1–3
+- Intervene for A if: doctor used medical jargon, gave a diagnosis, or mentioned tests, AND patient didn't ask about any of it — usually turns 3–7
+- Intervene for C if: doctor just gave specific treatment instructions (dosage, frequency, follow-up) AND patient didn't summarize back — usually turns 6–10
+- Intervene for E if: doctor proposed a treatment plan AND patient hasn't voiced any concerns or preferences — usually turns 8–14
+- Do NOT intervene for already-coached skills
+- Do NOT intervene if patient genuinely demonstrated the skill well
+- Choose the MOST IMPORTANT skill to coach given the conversation context
+- If no clear opportunity exists, do NOT intervene
+
+Respond ONLY in JSON (no markdown):
+{
+  "should_intervene": true/false,
+  "pace_skill": "P"|"A"|"C"|"E",
+  "feedback": "2–3 sentences: what the patient missed and why it matters, encouraging tone, speak to 'you'",
+  "suggestion": "A concrete example they could say right now (15–30 words, natural language, in quotes)"
+}`;
+
+  try { const raw = await callSingle(prompt, 450); return tryJSON(raw); }
+  catch(e) { return {should_intervene:false}; }
+}
+
+async function genPosFeedback(retryMsg, skill) {
+  const prompt = `A patient just practiced the ${skill} PACE skill (${PACE[skill].label}) in a medical consultation.
+
+Doctor's message they responded to: "${S.lastDocMsg}"
+Patient's response: "${retryMsg}"
+
+Write exactly 2 sentences of specific, warm positive feedback:
+1. Acknowledge something specific they did well in this exact response
+2. Briefly explain why this helps them get better care
+
+Keep it under 45 words total. Be genuine, not generic.`;
+  try { return await callSingle(prompt, 180); }
+  catch(e) { return `Well done using the ${PACE[skill].label.toLowerCase()} skill! This kind of communication helps your doctor understand and support you better.`; }
+}
+
+// ─────────────────────────────────────────────────
+// MODAL (guided)
+// ─────────────────────────────────────────────────
+const MODAL_COLORS = { P:'#16a34a', A:'#ca8a04', C:'#2563eb', E:'#db2777' };
+const SKILL_LABELS = { P:'P — Present your symptoms', A:'A — Ask questions', C:'C — Check understanding', E:'E — Express concerns' };
+
+function showModal(intervention) {
+  const skill = intervention.pace_skill;
+  const color = MODAL_COLORS[skill];
+  const info  = PACE[skill];
+
+  document.getElementById('modal-hdr').style.background = color;
+  document.getElementById('modal-skill-lbl').textContent = SKILL_LABELS[skill];
+  document.getElementById('modal-doc-msg').textContent   = S.lastDocMsg;
+  document.getElementById('modal-feedback').textContent  = intervention.feedback;
+  document.getElementById('modal-suggestion').textContent= intervention.suggestion;
+
+  const box = document.getElementById('modal-sugg-box');
+  box.style.background = info.bg;
+  box.style.border = `1.5px solid ${info.border}`;
+  box.querySelector('div').style.color = color;
+  document.getElementById('modal-suggestion').style.color = info.color;
+
+  document.getElementById('try-again-btn').style.background = color;
+  document.getElementById('modal').style.display = 'flex';
+}
+function hideModal() { document.getElementById('modal').style.display = 'none'; }
+
+function tryAgain() {
+  hideModal();
+  S.coached[S.pendingSkill] = true;
+  S.retryMode = true;
+  updateBadges();
+  addBubble('retry', S.lastDocMsg);
+  document.getElementById('chat-input').placeholder = `Practice ${PACE[S.pendingSkill].label.toLowerCase()} here…`;
+  lock(false);
+}
+
+async function continueWithout() {
+  hideModal();
+  const skill = S.pendingSkill;
+  S.coached[skill] = true;
+  S.practiced[skill] = false;
+  updateBadges();
+  S.apiHist.push({role:'user', content: S.pendingMsg});
+  if (allDone() || S.patTurns >= 10) { await endGuidedSession(); return; }
+  await doctorTurn();
+  if (allDone() || S.patTurns >= 10) { await endGuidedSession(); return; }
+  renderStepper();
+  lock(false);
+}
+
+// ─────────────────────────────────────────────────
+// SESSION CONTROL
+// ─────────────────────────────────────────────────
+async function startSession() {
+  S.mode = selectedModeKey;
+  S.persona = PERSONAS[selectedPersonaKey];
+  showView('v-practice');
+  document.getElementById('doc-ava').textContent  = S.persona.emoji;
+  document.getElementById('doc-name').textContent = S.persona.name;
+  document.getElementById('doc-sub').textContent  = S.persona.title;
+  document.getElementById('end-btn').textContent = S.mode === 'free' ? 'End & Get Report' : 'End Early';
+  renderModeControls();
+  renderStepper();
+
+  S.apiHist.push({role:'user', content:'Please begin the medical consultation now with your opening greeting to the patient.'});
+  await doctorTurn();
+}
+
+function allDone() { return Object.values(S.coached).every(v => v); }
+
+function requestEnd() {
+  if (S.locked || S.ended) return;
+  if (S.mode === 'free') { finishConvo(); }
+  else { endGuidedSession(); }
+}
+
+async function endGuidedSession() {
+  if (S.ended) return;
+  S.ended = true; lock(true);
+  await showGuidedCompletion();
+}
+
+async function finishConvo() {
+  if (S.ended) return;
+  S.ended = true; lock(true);
+  document.getElementById('loading-title').textContent = 'Analyzing your conversation…';
+  document.getElementById('loading-sub').textContent = 'Your PACE coach is reviewing the full session';
+  document.getElementById('v-loading').style.display = 'flex';
+  await analyzeFreeSession();
+}
+
+// ─────────────────────────────────────────────────
+// GUIDED COMPLETION
+// ─────────────────────────────────────────────────
+async function showGuidedCompletion() {
+  showView('v-complete');
+  const practicedCount = Object.values(S.practiced).filter(Boolean).length;
+  document.getElementById('complete-sub').textContent = `You actively practiced ${practicedCount} of 4 PACE skills with ${S.persona.name}`;
+
+  const grid = document.getElementById('pace-cards');
+  grid.innerHTML = '';
+  Object.entries(PACE).forEach(([skill, info], i) => {
+    const practiced = S.practiced[skill];
+    const coached   = S.coached[skill];
+    const card = document.createElement('div');
+    card.className = 'fade-in';
+    card.style.cssText = `background:#fff;border:2px solid ${coached ? info.accent : '#e2e8f0'};border-radius:16px;padding:1rem;animation-delay:${i*0.08}s`;
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem">
+        <div style="width:36px;height:36px;border-radius:10px;background:${info.bg};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:${info.color};flex-shrink:0">${skill}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:.82rem;color:#0f172a">${info.label}</div></div>
+        <div style="font-size:1.1rem">${practiced ? '✅' : coached ? '📖' : '⬜'}</div>
+      </div>
+      <div style="font-size:.72rem;color:#64748b;line-height:1.5">${info.desc}</div>`;
+    grid.appendChild(card);
+  });
+
+  const rem = document.getElementById('pace-reminder');
+  rem.innerHTML = '';
+  Object.entries(PACE).forEach(([skill, info]) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:.7rem;align-items:flex-start';
+    row.innerHTML = `
+      <div style="width:26px;height:26px;border-radius:8px;background:${info.bg};color:${info.color};font-weight:800;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${skill}</div>
+      <div>
+        <div style="font-size:.82rem;font-weight:700;color:#1e293b">${info.label}</div>
+        <div style="font-size:.72rem;color:#64748b;margin-top:.15rem">${info.why}</div>
+      </div>`;
+    rem.appendChild(row);
+  });
+}
+
+// ─────────────────────────────────────────────────
+// FREE MODE — ANALYSIS
+// ─────────────────────────────────────────────────
+async function analyzeFreeSession() {
+  const lines = S.history.map((m,i) => `[${i}] ${m.role==='doctor'?'Doctor':'Patient'}: ${m.content}`).join('\n');
+
+  const prompt = `You are a PACE communication skills coach. Analyse the patient's performance in this medical consultation.
+
+PACE FRAMEWORK (Dr. Donald Cegala, Ohio State University):
+P — PRESENT: Patient shares detailed symptom info (duration, severity 1–10, triggers, daily impact, medications tried). Not just a one-liner.
+A — ASK: Patient asks questions about medical jargon, diagnosis names, test names, or treatment rationale when the doctor mentions them.
+C — CHECK: Patient summarises or repeats back treatment instructions to verify correct understanding.
+E — EXPRESS: Patient voices concerns, preferences, fears, or barriers (cost, side effects, lifestyle) about recommended treatment.
+
+REFERENCE EXAMPLES of excellent PACE communication:
+${MTS_REF}
+
+FULL CONVERSATION (with turn indices):
+${lines}
+
+TASK: Produce a structured analysis. Do NOT use numeric scores (1-10, percentages, points) anywhere — use only the tier labels defined below. Real patients rarely use all four skills fully in one visit, and that is normal, not a failure — reflect that in your tone.
+
+For "pace_summary", rate each skill using a TIER, not a number:
+  - "strong": clearly and repeatedly demonstrated this visit
+  - "started": attempted at least once, or partially
+  - "not_yet": no clear instance this visit — this is common and not a failure, just an opening for next time
+
+For "annotations": identify 6–10 key moments in the conversation.
+  - For PATIENT turns: note strengths (patient did P/A/C/E well) and areas needing improvement
+  - For DOCTOR turns: note missed opportunities (doctor said something that was a prime cue for A, C, or E, but patient didn't respond with that skill)
+  - "highlight_text" = an exact substring (word or short phrase) from that turn's content to highlight; keep it short and precise
+  - "suggested_alternative" = a concrete example of what the patient could say (for patient turns needing improvement or missed doctor-side opportunities)
+
+Respond ONLY in valid JSON (no markdown, no code blocks):
+{
+  "overall_summary": "2–3 sentence honest, encouraging assessment. Do not mention scores or percentages.",
+  "pace_summary": {
+    "P": {"tier":"strong|started|not_yet","note":"1-2 sentences: what happened (or didn't), and why it matters"},
+    "A": {"tier":"strong|started|not_yet","note":"..."},
+    "C": {"tier":"strong|started|not_yet","note":"..."},
+    "E": {"tier":"strong|started|not_yet","note":"..."}
+  },
+  "annotations": [
+    {
+      "turn_index": 2, "role": "patient", "pace_skill": "P", "ann_type": "strength",
+      "short_label": "Good symptom detail",
+      "feedback": "You clearly described the onset and severity. This helped the doctor understand the urgency.",
+      "highlight_text": "sharp pain on the right side", "suggested_alternative": null
+    },
+    {
+      "turn_index": 4, "role": "doctor", "pace_skill": "A", "ann_type": "missed_opportunity",
+      "short_label": "Opportunity to ask",
+      "feedback": "The doctor used the term 'ACE inhibitor' without explaining it. This was a perfect moment to ask what that means.",
+      "highlight_text": "ACE inhibitor", "suggested_alternative": "Could you explain what an ACE inhibitor is and why it's the right choice for me?"
+    }
+  ]
+}`;
+
+  try {
+    const raw  = await callSingle(prompt, 1600);
+    const data = tryJSON(raw);
+    if (data) { S.annotations = data.annotations || []; renderReview(data); }
+    else renderReviewFallback();
+  } catch(e) { console.error(e); renderReviewFallback(); }
+}
+
+const TIER_INFO = {
+  strong:  { label:'Practiced well',      bg:'#dcfce7', color:'#15803d', border:'#86efac' },
+  started: { label:'Started to practice', bg:'#fef9c3', color:'#a16207', border:'#fde68a' },
+  not_yet: { label:'Not this visit',      bg:'#f1f5f9', color:'#64748b', border:'#e2e8f0' }
+};
+
+function renderReview(data) {
+  document.getElementById('v-loading').style.display = 'none';
+  showView('v-review');
+
+  const tiers = data.pace_summary || {};
+  const usedCount = ['P','A','C','E'].filter(sk => (tiers[sk]?.tier||'not_yet') !== 'not_yet').length;
+  document.getElementById('rc-chip').innerHTML = `<i class="fas fa-clipboard-check"></i> ${usedCount} of 4 skills used this visit`;
+
+  document.getElementById('rc-summary').innerHTML = `
+    <div class="rc-section-head"><h2>Overall</h2><div class="rc-rule-line"></div></div>
+    <div style="font-size:.9rem;color:var(--rc-ink-soft);line-height:1.7">${esc(data.overall_summary||'')}</div>`;
+
+  const grid = document.getElementById('rc-pace-grid');
+  grid.innerHTML = '';
+  ['P','A','C','E'].forEach(sk => {
+    const d = tiers[sk] || {tier:'not_yet', note:''};
+    const info = PACE[sk];
+    const t = TIER_INFO[d.tier] || TIER_INFO.not_yet;
+    const card = document.createElement('div');
+    card.className = 'rc-card fade-up';
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.55rem">
+        <div style="width:32px;height:32px;border-radius:8px;background:${info.bg};color:${info.color};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0">${sk}</div>
+        <div style="flex:1"><div class="rc-head" style="font-weight:700;font-size:.88rem;color:var(--rc-ink)">${info.label}</div></div>
+        <span class="rc-tier" style="background:${t.bg};color:${t.color};border:1px solid ${t.border}">${t.label}</span>
+      </div>
+      <div style="font-size:.78rem;color:var(--rc-ink-soft);line-height:1.55">${esc(d.note||'')}</div>`;
+    grid.appendChild(card);
+  });
+
+  const annByIdx = {};
+  (data.annotations||[]).forEach(a => { annByIdx[a.turn_index] = a; });
+
+  const log = document.getElementById('rc-log');
+  log.innerHTML = '';
+  S.history.forEach((turn, idx) => {
+    const ann = annByIdx[idx];
+    const isDoc = turn.role === 'doctor';
+    const info = ann ? PACE[ann.pace_skill] : null;
+    const row = document.createElement('div');
+    row.dataset.idx = idx;
+
+    let content = esc(turn.content);
+    if (ann?.highlight_text) content = highlightText(turn.content, ann.highlight_text, ann.pace_skill);
+
+    const roleLabel = isDoc
+      ? `<span class="rc-mono" style="font-size:.62rem;color:var(--rc-ink-mute)">${S.persona.emoji} ${S.persona.name}</span>`
+      : `<span class="rc-mono" style="font-size:.62rem;color:#4f6bd8">You</span>`;
+    const badge = ann ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:5px;background:${info.color};color:#fff;font-weight:800;font-size:.58rem;margin-left:.35rem">${ann.pace_skill}</span>` : '';
+
+    row.className = ann ? 'rc-ann-row' : '';
+    if (ann) row.onclick = () => selectAnnotation(idx, ann);
+
+    row.innerHTML = `
+      <div style="padding-left:${isDoc?'0':'2rem'};margin-bottom:.15rem">${roleLabel}${badge}</div>
+      <div style="padding-left:${isDoc?'0':'2rem'}">
+        <div class="rc-log-bub ${isDoc?'doc':'pat'}" style="${ann?`border-left:3px solid ${info.color}`:''}">${content}</div>
+      </div>`;
+    log.appendChild(row);
+  });
+
+  document.getElementById('rc-summary-band').innerHTML = `
+    <div class="rc-callout">
+      <span class="rc-mono" style="font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--rc-gold);display:block;margin-bottom:.4rem">Practice again</span>
+      Try this same scenario once more, or a harder one — the goal across sessions is to notice more of these moments over time, not to complete this one perfectly.
+    </div>`;
+}
+
+function selectAnnotation(idx, ann) {
+  document.querySelectorAll('.rc-ann-row').forEach(r => r.classList.remove('selected'));
+  const row = document.querySelector(`.rc-ann-row[data-idx="${idx}"]`);
+  if (row) row.classList.add('selected');
+
+  const info = PACE[ann.pace_skill];
+  const turn = S.history[idx];
+  const isDoc = turn.role === 'doctor';
+  const typeLabel = ann.ann_type === 'strength' ? 'Strength' : ann.ann_type === 'missed_opportunity' ? 'Missed Opportunity' : 'Needs Improvement';
+  const typeBg = ann.ann_type === 'strength' ? '#dcfce7' : ann.ann_type === 'missed_opportunity' ? '#fef9c3' : '#fff7ed';
+  const typeColor = ann.ann_type === 'strength' ? '#15803d' : ann.ann_type === 'missed_opportunity' ? '#a16207' : '#b45309';
+
+  let excerpt = esc(turn.content);
+  if (ann.highlight_text) excerpt = highlightText(turn.content, ann.highlight_text, ann.pace_skill);
+
+  document.getElementById('rc-fb-empty').style.display = 'none';
+  const fc = document.getElementById('rc-fb-content');
+  fc.style.display = 'block';
+  fc.className = 'slide-r';
+  fc.innerHTML = `
+    <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1rem">
+      <div style="width:34px;height:34px;border-radius:8px;background:${info.color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem;flex-shrink:0">${ann.pace_skill}</div>
+      <div>
+        <div class="rc-head" style="font-weight:700;font-size:.88rem;color:var(--rc-ink)">${info.label}</div>
+        <div style="font-size:.66rem;color:${info.color}">${ann.short_label||''}</div>
+      </div>
+    </div>
+    <div style="display:inline-flex;align-items:center;padding:.28rem .7rem;border-radius:20px;background:${typeBg};margin-bottom:.85rem">
+      <span class="rc-mono" style="font-size:.65rem;font-weight:700;color:${typeColor}">${typeLabel}</span>
+    </div>
+    <div class="rc-card" style="margin-bottom:.85rem">
+      <div class="rc-mono" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--rc-ink-mute);margin-bottom:.35rem">${isDoc ? 'Doctor said' : 'You said'}</div>
+      <div style="font-size:.8rem;color:var(--rc-ink-soft);line-height:1.6;font-style:italic">${excerpt}</div>
+    </div>
+    <div style="margin-bottom:.85rem">
+      <div class="rc-mono" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--rc-ink-mute);margin-bottom:.35rem">Coach Feedback</div>
+      <div style="font-size:.83rem;color:var(--rc-ink);line-height:1.6">${esc(ann.feedback||'')}</div>
+    </div>
+    ${ann.suggested_alternative ? `
+    <div style="background:${info.bg};border:1.5px solid ${info.border};border-radius:8px;padding:.75rem .9rem">
+      <div class="rc-mono" style="font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:${info.color};margin-bottom:.35rem">You could say something like</div>
+      <div style="font-size:.8rem;color:${info.color};line-height:1.6;font-style:italic">"${esc(ann.suggested_alternative)}"</div>
+    </div>` : ''}
+  `;
+}
+
+function renderReviewFallback() {
+  document.getElementById('v-loading').style.display = 'none';
+  showView('v-review');
+  document.getElementById('rc-chip').textContent = 'Analysis unavailable';
+  document.getElementById('rc-summary').innerHTML = `<div style="text-align:center;color:var(--rc-ink-mute);font-size:.82rem;padding:1rem">We couldn't analyze this session, but great job practicing!</div>`;
+  document.getElementById('rc-pace-grid').innerHTML = '';
+  document.getElementById('rc-log').innerHTML = S.history.map((m) =>
+    `<div style="font-size:.78rem;color:${m.role==='doctor'?'var(--rc-ink-soft)':'#1d4ed8'};padding:.4rem 0">
+      <b>${m.role==='doctor'?S.persona.name:'You'}:</b> ${esc(m.content)}</div>`).join('');
+}
+
+// ─────────────────────────────────────────────────
+// CHAT UI HELPERS
+// ─────────────────────────────────────────────────
+function addBubble(role, text) {
+  const area = document.getElementById('chat-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'fade-up';
+
+  if (role === 'doctor') {
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:.6rem">
+        <div style="width:34px;height:34px;border-radius:50%;background:#f1f5f9;border:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0">${S.persona.emoji}</div>
+        <div class="bub-doc" style="padding:.7rem 1rem;max-width:72%">
+          <div style="font-size:.83rem;color:#1e293b;line-height:1.55">${esc(text)}</div>
+        </div>
+      </div>`;
+  } else if (role === 'retry') {
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:.6rem">
+        <div style="width:34px;height:34px;border-radius:50%;background:#f1f5f9;border:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0">${S.persona.emoji}</div>
+        <div>
+          <div style="font-size:.65rem;color:#94a3b8;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem">
+            <i class="fas fa-redo" style="font-size:.6rem"></i> Repeating last message
+          </div>
+          <div class="bub-retry" style="padding:.7rem 1rem;max-width:72%">
+            <div style="font-size:.83rem;color:#374151;line-height:1.55;font-style:italic">${esc(text)}</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    wrap.innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:.6rem;justify-content:flex-end">
+        <div class="bub-pat" style="padding:.7rem 1rem;max-width:72%">
+          <div style="font-size:.83rem;color:#fff;line-height:1.55">${esc(text)}</div>
+        </div>
+        <div style="width:34px;height:34px;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">You</div>
+      </div>`;
+  }
+  area.appendChild(wrap);
+  scrollChat();
+}
+
+function addCoachMsg(text, skill, isPositive) {
+  const info = PACE[skill];
+  const area = document.getElementById('chat-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'fade-up';
+  wrap.style.display = 'flex';
+  wrap.style.justifyContent = 'center';
+  wrap.innerHTML = `
+    <div style="max-width:85%;width:100%;background:${info.bg};border:1.5px solid ${info.border};border-radius:12px;padding:.75rem 1rem">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem">
+        <div style="width:20px;height:20px;border-radius:6px;background:${info.accent};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="fas fa-graduation-cap" style="color:#fff;font-size:.6rem"></i>
+        </div>
+        <span style="font-size:.68rem;font-weight:700;color:${info.accent};text-transform:uppercase;letter-spacing:.06em">PACE Coach — ${info.label}</span>
+        ${isPositive ? '<span style="margin-left:auto">⭐</span>' : ''}
+      </div>
+      <div style="font-size:.78rem;color:${info.color};line-height:1.5">${esc(text)}</div>
+    </div>`;
+  area.appendChild(wrap);
+  scrollChat();
+}
+
+function showTyping(show) {
+  const area = document.getElementById('chat-area');
+  const ex = document.getElementById('typing-ind');
+  if (show && !ex) {
+    const d = document.createElement('div');
+    d.id = 'typing-ind';
+    d.className = 'fade-up';
+    d.innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:.6rem">
+        <div style="width:34px;height:34px;border-radius:50%;background:#f1f5f9;border:1.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:1.05rem">${S.persona?.emoji||'👨‍⚕️'}</div>
+        <div class="bub-doc" style="padding:.7rem .9rem">
+          <div style="display:flex;gap:.3rem;align-items:center"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>`;
+    area.appendChild(d);
+    scrollChat();
+  } else if (!show && ex) { ex.remove(); }
+}
+
+function scrollChat() {
+  const a = document.getElementById('chat-area');
+  requestAnimationFrame(() => { a.scrollTop = a.scrollHeight; });
+}
+
+function lock(v) {
+  S.locked = v;
+  document.getElementById('chat-input').disabled = v;
+  document.getElementById('send-btn').disabled   = v;
+  if (!v) document.getElementById('chat-input').focus();
+}
+
+function showView(id) {
+  ['v-education','v-setup','v-practice','v-complete','v-review'].forEach(v => {
+    document.getElementById(v).style.display = 'none';
+  });
+  const t = document.getElementById(id);
+  t.style.display = 'flex';
+  t.style.flexDirection = 'column';
+  if (id === 'v-practice' || id === 'v-review') t.style.height = '100vh';
+  window.scrollTo(0,0);
+}
+
+function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function highlightText(content, hlStr, skill) {
+  if (!hlStr) return esc(content);
+  const idx = content.toLowerCase().indexOf(hlStr.toLowerCase());
+  if (idx === -1) return esc(content);
+  return esc(content.slice(0, idx)) +
+    `<mark class="hl-${skill}">${esc(content.slice(idx, idx+hlStr.length))}</mark>` +
+    esc(content.slice(idx + hlStr.length));
+}
+
+function pause(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────
+buildEduCards();
+buildModeCards();
+buildPersonas();
+</script>
+</body>
+</html>

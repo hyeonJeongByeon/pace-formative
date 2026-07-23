@@ -1,0 +1,21 @@
+# Secrets — never commit. The Anthropic API key lives only in the serverless
+# proxy's environment (see .env.example).
+.env
+.env.*
+!.env.example
+
+# Participant data — never commit (see CLAUDE.md). Survey exports and coded
+# data are CSVs; blocking the whole extension is intentional.
+*.csv
+
+# Dependencies / build
+node_modules/
+dist/
+.vercel/
+.wrangler/
+
+# OS noise
+.DS_Store
+
+# Claude Code local (per-machine) settings
+.claude/settings.local.json
