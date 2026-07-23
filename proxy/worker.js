@@ -32,47 +32,56 @@ function rateLimited(ip) {
   return arr.length > RATE_LIMIT.max;
 }
 
-function corsHeaders(env) {
+// ALLOWED_ORIGIN: "*" or a comma-separated allowlist
+// (e.g. "https://user.github.io,http://localhost:8080").
+function corsHeaders(env, request) {
+  const conf = env.ALLOWED_ORIGIN || '*';
+  let allow = conf;
+  if (conf !== '*') {
+    const origin = request.headers.get('Origin') || '';
+    const list = conf.split(',').map(s => s.trim());
+    allow = list.includes(origin) ? origin : list[0];
+  }
   return {
-    'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN || '*',
+    'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, x-study-passcode',
   };
 }
 
-function json(body, status, env) {
+function json(body, status, env, request) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders(env) },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(env, request) },
   });
 }
 
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders(env) });
+      return new Response(null, { status: 204, headers: corsHeaders(env, request) });
     }
     if (request.method !== 'POST') {
-      return json({ error: 'POST only' }, 405, env);
+      return json({ error: 'POST only' }, 405, env, request);
     }
 
     const passcode = request.headers.get('x-study-passcode') || '';
     if (!env.STUDY_PASSCODE || passcode !== env.STUDY_PASSCODE) {
-      return json({ error: 'Invalid or missing study passcode' }, 401, env);
+      return json({ error: 'Invalid or missing study passcode' }, 401, env, request);
     }
 
     const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
     if (rateLimited(ip)) {
-      return json({ error: 'Rate limit exceeded — wait a minute and retry' }, 429, env);
+      return json({ error: 'Rate limit exceeded — wait a minute and retry' }, 429, env, request);
     }
 
     let body;
     try { body = await request.json(); }
-    catch { return json({ error: 'Invalid JSON body' }, 400, env); }
+    catch { return json({ error: 'Invalid JSON body' }, 400, env, request); }
 
     const { system, messages, max_tokens } = body;
     if (!Array.isArray(messages) || messages.length === 0) {
-      return json({ error: 'messages[] required' }, 400, env);
+      return json({ error: 'messages[] required' }, 400, env, request);
     }
 
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
@@ -91,6 +100,6 @@ export default {
     });
 
     const data = await upstream.json();
-    return json(data, upstream.status, env);
+    return json(data, upstream.status, env, request);
   },
 };
