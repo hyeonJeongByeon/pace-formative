@@ -155,6 +155,7 @@
     addBubble('participant', text);
     S.patTurns++;
     updateTurnCounter();
+    if (S.patTurns === 1) document.getElementById('scenario-banner').classList.add('collapsed');
 
     // Termination (b): participant has answered the closing question → end.
     if (S.phase === 'awaiting-closing-answer') {
@@ -218,6 +219,8 @@
     document.getElementById('chat-avatar').textContent = S.scenario.provider.avatar;
     document.getElementById('chat-provider-name').textContent = S.scenario.provider.name;
     document.getElementById('chat-scenario-title').textContent = S.scenario.title;
+    document.getElementById('scenario-banner-text').textContent = S.scenario.vignette.participantBriefing;
+    document.getElementById('scenario-banner').classList.remove('collapsed');
     document.getElementById('chat-log').innerHTML = '';
     updateTurnCounter();
     show('view-chat');

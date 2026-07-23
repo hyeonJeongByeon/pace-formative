@@ -105,6 +105,21 @@ input:focus { border-color: var(--accent); }
 .chat-head .who div { font-size: .72rem; color: var(--ink-mute); }
 #turn-counter { font-size: .74rem; color: var(--ink-mute); white-space: nowrap; }
 
+/* Scenario strip — keeps the assigned situation visible during role-play */
+.scenario-banner {
+  background: var(--accent-soft); border-bottom: 1px solid var(--line);
+  padding: .55rem 1.1rem; cursor: pointer; flex-shrink: 0; user-select: none;
+}
+.scenario-banner .sb-label {
+  font-size: .7rem; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: .15rem;
+}
+.scenario-banner .sb-hint { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-mute); }
+.scenario-banner .sb-text { font-size: .82rem; color: var(--ink-soft); line-height: 1.5; }
+.scenario-banner.collapsed .sb-text {
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+}
+
 #chat-log { flex: 1; overflow-y: auto; padding: 1.1rem; display: flex; flex-direction: column; gap: .8rem; }
 
 .msg { display: flex; gap: .55rem; align-items: flex-end; max-width: 88%; }

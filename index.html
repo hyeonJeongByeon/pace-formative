@@ -90,6 +90,10 @@
     <div id="turn-counter"></div>
     <button class="ghost no-print" onclick="App.researcherEnd()" title="Researcher escape hatch: provider closes the visit now">End visit</button>
   </div>
+  <div id="scenario-banner" class="scenario-banner" onclick="this.classList.toggle('collapsed')" title="Click to expand/collapse">
+    <div class="sb-label">📋 Your situation <span class="sb-hint">(click to expand/collapse)</span></div>
+    <div class="sb-text" id="scenario-banner-text"></div>
+  </div>
   <div id="chat-log"></div>
   <div class="chat-input-row">
     <input type="text" id="chat-input" placeholder="Say something to the provider…"
