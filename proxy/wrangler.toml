@@ -5,7 +5,7 @@ compatibility_date = "2026-07-01"
 # Non-secret config. Comma-separated allowlist of origins (or "*").
 # GitHub Pages site + localhost for development.
 [vars]
-ALLOWED_ORIGIN = "https://hyeonjeongbyeon.com,https://www.hyeonjeongbyeon.com,https://hyeonjeongbyeon.github.io,http://localhost:8080"
+ALLOWED_ORIGIN = "https://hyeonjeongbyeon.com,https://www.hyeonjeongbyeon.com,https://hyeonjeongbyeon.github.io,https://pace-chi-ten.vercel.app,http://localhost:8080"
 
 # Secrets are NOT set here (this file is committed). Set them with:
 #   npx wrangler secret put ANTHROPIC_API_KEY
